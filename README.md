@@ -1,0 +1,174 @@
+# Qinglong MCP Server
+
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.7.2-blue.svg)](https://www.typescriptlang.org/)
+[![MCP SDK](https://img.shields.io/badge/MCP%20SDK-1.6.1-green.svg)](https://modelcontextprotocol.io/)
+[![Node.js](https://img.shields.io/badge/Node.js-%3E%3D18-brightgreen.svg)](https://nodejs.org/)
+
+基于 MCP (Model Context Protocol) 的青龙面板管理服务器，提供 35 个工具用于管理定时任务、环境变量、订阅、依赖、脚本和系统配置。
+
+## 特性
+
+- **完整 API 覆盖** - 35 个工具覆盖青龙面板核心功能
+- **类型安全** - TypeScript + Zod 双重类型保障
+- **双模式支持** - stdio (本地) 和 HTTP (远程) 传输
+- **双格式输出** - Markdown (人类可读) 和 JSON (机器可读)
+- **自动认证** - 使用 Client Credentials 自动获取 Token
+- **批量操作** - 支持批量管理任务和环境变量
+
+## 快速开始
+
+### 1. 安装
+
+```bash
+git clone https://github.com/your-repo/qinglong-mcp-server.git
+cd qinglong-mcp-server
+npm install
+npm run build
+```
+
+### 2. 配置环境变量
+
+```bash
+export QL_URL="http://localhost:5700"
+export QL_CLIENT_ID="your_client_id"
+export QL_CLIENT_SECRET="your_client_secret"
+```
+
+### 3. 运行
+
+```bash
+# stdio 模式
+npm start
+
+# HTTP 模式
+TRANSPORT=http PORT=3000 npm start
+```
+
+### 4. 与 Claude Code 集成
+
+编辑 `~/.claude/mcp.json`:
+
+```json
+{
+  "mcpServers": {
+    "qinglong": {
+      "command": "node",
+      "args": ["/absolute/path/to/qinglong-mcp-server/dist/index.js"],
+      "env": {
+        "QL_URL": "http://your-qinglong:5700",
+        "QL_CLIENT_ID": "your_client_id",
+        "QL_CLIENT_SECRET": "your_client_secret"
+      }
+    }
+  }
+}
+```
+
+## 功能模块
+
+### 定时任务管理 (10 个工具)
+
+| 工具 | 功能 | 类型 |
+|------|------|------|
+| `qinglong_list_crons` | 列出定时任务 | 只读 |
+| `qinglong_create_cron` | 创建定时任务 | 写入 |
+| `qinglong_update_cron` | 更新定时任务 | 写入 |
+| `qinglong_delete_crons` | 删除定时任务 | 破坏性 |
+| `qinglong_run_crons` | 运行定时任务 | 写入 |
+| `qinglong_stop_crons` | 停止定时任务 | 写入 |
+| `qinglong_enable_crons` | 启用定时任务 | 写入 |
+| `qinglong_disable_crons` | 禁用定时任务 | 写入 |
+| `qinglong_get_cron_log` | 查看任务日志 | 只读 |
+
+### 环境变量管理 (8 个工具)
+
+| 工具 | 功能 | 类型 |
+|------|------|------|
+| `qinglong_list_envs` | 列出环境变量 | 只读 |
+| `qinglong_create_env` | 创建环境变量 | 写入 |
+| `qinglong_create_envs` | 批量创建变量 | 写入 |
+| `qinglong_update_env` | 更新环境变量 | 写入 |
+| `qinglong_delete_envs` | 删除环境变量 | 破坏性 |
+| `qinglong_enable_envs` | 启用环境变量 | 写入 |
+| `qinglong_disable_envs` | 禁用环境变量 | 写入 |
+
+### 脚本管理 (7 个工具)
+
+| 工具 | 功能 | 类型 |
+|------|------|------|
+| `qinglong_list_scripts` | 列出脚本文件 | 只读 |
+| `qinglong_get_script` | 获取脚本内容 | 只读 |
+| `qinglong_create_script` | 创建脚本 | 写入 |
+| `qinglong_update_script` | 更新脚本 | 写入 |
+| `qinglong_delete_script` | 删除脚本 | 破坏性 |
+| `qinglong_run_script` | 运行脚本 | 写入 |
+| `qinglong_stop_script` | 停止脚本 | 写入 |
+
+### 脚本管理 (7 个工具)
+
+| 工具 | 功能 | 类型 |
+|------|------|------|
+| `qinglong_list_scripts` | 列出脚本文件 | 只读 |
+| `qinglong_get_script` | 获取脚本内容 | 只读 |
+| `qinglong_create_script` | 创建脚本 | 写入 |
+| `qinglong_update_script` | 更新脚本 | 写入 |
+| `qinglong_delete_script` | 删除脚本 | 破坏性 |
+| `qinglong_run_script` | 运行脚本 | 写入 |
+| `qinglong_stop_script` | 停止脚本 | 写入 |
+
+### 系统管理 (2 个工具)
+
+| 工具 | 功能 | 类型 |
+|------|------|------|
+| `qinglong_get_system_info` | 获取系统信息 | 只读 |
+| `qinglong_send_notification` | 发送系统通知 | 写入 |
+
+## 配置说明
+
+### 环境变量
+
+| 变量 | 描述 | 必需 | 默认值 |
+|------|------|------|--------|
+| `QL_URL` | 青龙面板地址 | 否 | `http://localhost:5700` |
+| `QL_CLIENT_ID` | Client ID | 是 | - |
+| `QL_CLIENT_SECRET` | Client Secret | 是 | - |
+| `TRANSPORT` | 传输协议 | 否 | `stdio` |
+| `PORT` | HTTP 端口 | 否 | `3000` |
+
+### 获取认证信息
+
+1. 登录青龙面板
+2. 进入 `系统设置` -> `开放设置`
+3. 创建应用并获取 `Client ID` 和 `Client Secret`
+4. 设置环境变量 `QL_CLIENT_ID` 和 `QL_CLIENT_SECRET`
+
+## 项目结构
+
+```
+qinglong-mcp-server/
+├── src/
+│   ├── index.ts              # 主入口文件
+│   ├── constants.ts          # 常量定义
+│   ├── types.ts              # 类型定义
+│   ├── schemas/              # Zod 验证模式
+│   ├── services/             # 服务层
+│   └── tools/                # 工具实现
+├── dist/                     # 编译输出
+├── package.json
+├── tsconfig.json
+├── README.md
+├── EXAMPLES.md              # 使用示例
+├── DEVELOPMENT.md           # 开发文档
+└── CLAUDE.md                # AI 上下文文档
+```
+
+## 相关链接
+
+- [使用示例](EXAMPLES.md) - 详细的使用场景和示例
+- [开发文档](DEVELOPMENT.md) - 架构设计和开发指南
+- [青龙面板](https://github.com/whyour/qinglong)
+- [MCP 协议](https://modelcontextprotocol.io/)
+
+## 许可证
+
+MIT License
