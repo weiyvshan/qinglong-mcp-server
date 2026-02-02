@@ -16,10 +16,6 @@ export const CLIENT_ID = process.env.QL_CLIENT_ID || "";
 export const CLIENT_SECRET = process.env.QL_CLIENT_SECRET || "";
 export const TOKEN = process.env.QL_TOKEN || "";
 
-// Transport configuration
-export const TRANSPORT = process.env.TRANSPORT || "stdio";
-export const HTTP_PORT = parseInt(process.env.PORT || "3000");
-
 // Response limits
 export const CHARACTER_LIMIT = 25000;
 export const DEFAULT_LIMIT = 20;

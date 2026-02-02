@@ -10,7 +10,7 @@
 
 - **完整 API 覆盖** - 35 个工具覆盖青龙面板核心功能
 - **类型安全** - TypeScript + Zod 双重类型保障
-- **双模式支持** - stdio (本地) 和 HTTP (远程) 传输
+- **本地运行** - 基于 stdio 标准输入输出，与 Claude Code 无缝集成
 - **双格式输出** - Markdown (人类可读) 和 JSON (机器可读)
 - **自动认证** - 使用 Client Credentials 自动获取 Token
 - **批量操作** - 支持批量管理任务和环境变量
@@ -37,11 +37,7 @@ export QL_CLIENT_SECRET="your_client_secret"
 ### 3. 运行
 
 ```bash
-# stdio 模式
 npm start
-
-# HTTP 模式
-TRANSPORT=http PORT=3000 npm start
 ```
 
 ### 4. 与 Claude Code 集成
@@ -66,7 +62,7 @@ TRANSPORT=http PORT=3000 npm start
 
 ## 功能模块
 
-### 定时任务管理 (10 个工具)
+### 定时任务管理 (9 个工具)
 
 | 工具 | 功能 | 类型 |
 |------|------|------|
@@ -80,29 +76,37 @@ TRANSPORT=http PORT=3000 npm start
 | `qinglong_disable_crons` | 禁用定时任务 | 写入 |
 | `qinglong_get_cron_log` | 查看任务日志 | 只读 |
 
-### 环境变量管理 (8 个工具)
+### 环境变量管理 (6 个工具)
 
 | 工具 | 功能 | 类型 |
 |------|------|------|
 | `qinglong_list_envs` | 列出环境变量 | 只读 |
-| `qinglong_create_env` | 创建环境变量 | 写入 |
-| `qinglong_create_envs` | 批量创建变量 | 写入 |
+| `qinglong_create_envs` | 创建环境变量（支持批量） | 写入 |
 | `qinglong_update_env` | 更新环境变量 | 写入 |
 | `qinglong_delete_envs` | 删除环境变量 | 破坏性 |
 | `qinglong_enable_envs` | 启用环境变量 | 写入 |
 | `qinglong_disable_envs` | 禁用环境变量 | 写入 |
 
-### 脚本管理 (7 个工具)
+### 订阅管理 (7 个工具)
 
 | 工具 | 功能 | 类型 |
 |------|------|------|
-| `qinglong_list_scripts` | 列出脚本文件 | 只读 |
-| `qinglong_get_script` | 获取脚本内容 | 只读 |
-| `qinglong_create_script` | 创建脚本 | 写入 |
-| `qinglong_update_script` | 更新脚本 | 写入 |
-| `qinglong_delete_script` | 删除脚本 | 破坏性 |
-| `qinglong_run_script` | 运行脚本 | 写入 |
-| `qinglong_stop_script` | 停止脚本 | 写入 |
+| `qinglong_list_subscriptions` | 列出订阅 | 只读 |
+| `qinglong_create_subscription` | 创建订阅 | 写入 |
+| `qinglong_update_subscription` | 更新订阅 | 写入 |
+| `qinglong_delete_subscriptions` | 删除订阅 | 破坏性 |
+| `qinglong_run_subscriptions` | 运行订阅 | 写入 |
+| `qinglong_enable_subscriptions` | 启用订阅 | 写入 |
+| `qinglong_disable_subscriptions` | 禁用订阅 | 写入 |
+
+### 依赖管理 (4 个工具)
+
+| 工具 | 功能 | 类型 |
+|------|------|------|
+| `qinglong_list_dependencies` | 列出依赖 | 只读 |
+| `qinglong_create_dependencies` | 创建依赖 | 写入 |
+| `qinglong_delete_dependencies` | 删除依赖 | 破坏性 |
+| `qinglong_reinstall_dependencies` | 重装依赖 | 写入 |
 
 ### 脚本管理 (7 个工具)
 
@@ -132,8 +136,6 @@ TRANSPORT=http PORT=3000 npm start
 | `QL_URL` | 青龙面板地址 | 否 | `http://localhost:5700` |
 | `QL_CLIENT_ID` | Client ID | 是 | - |
 | `QL_CLIENT_SECRET` | Client Secret | 是 | - |
-| `TRANSPORT` | 传输协议 | 否 | `stdio` |
-| `PORT` | HTTP 端口 | 否 | `3000` |
 
 ### 获取认证信息
 

@@ -6,7 +6,7 @@
 - **框架**: MCP TypeScript SDK 1.6.1
 - **HTTP 客户端**: Axios 1.7.9
 - **验证库**: Zod 3.23.8
-- **传输协议**: stdio / Streamable HTTP
+- **传输协议**: stdio (本地标准输入输出)
 - **Node.js**: >= 18
 
 ## 项目结构
