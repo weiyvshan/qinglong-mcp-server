@@ -153,7 +153,14 @@ export async function apiRequest<T>(
     data,
     params
   });
-  return response.data;
+  const payload: any = response.data;
+  if (payload && typeof payload === "object" && "code" in payload) {
+    if (payload.code !== 200) {
+      throw new Error(payload.message || `API 请求失败 (${payload.code})`);
+    }
+    return payload.data as T;
+  }
+  return payload as T;
 }
 
 /**

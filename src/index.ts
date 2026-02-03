@@ -78,6 +78,22 @@ function formatListResponse<T extends Record<string, unknown>>(
 	return { text, output };
 }
 
+function extractList<T>(response: any): { items: T[]; total: number } {
+	if (Array.isArray(response)) {
+		return { items: response, total: response.length };
+	}
+
+	const items = Array.isArray(response?.data) ? response.data : [];
+	const total =
+		typeof response?.total === "number"
+			? response.total
+			: typeof response?.count === "number"
+				? response.count
+				: items.length;
+
+	return { items, total };
+}
+
 // ============================================================================
 // 创建 MCP 服务器
 // ============================================================================
@@ -112,15 +128,14 @@ function createServer(): McpServer {
 		},
 		async (params: any) => {
 			try {
-				const response = await apiRequest<{ data: Crontab[]; count: number }>(
+				const response = await apiRequest<{ data: Crontab[]; count?: number; total?: number }>(
 					"/crons",
 					"GET",
 					undefined,
 					{ searchValue: params.searchValue, t: Date.now() }
 				);
 
-				const crons = response.data || [];
-				const total = response.count || 0;
+				const { items: crons, total } = extractList<Crontab>(response);
 
 				if (crons.length === 0) {
 					return { content: [{ type: "text" as const, text: "暂无定时任务" }] };
@@ -393,15 +408,14 @@ function createServer(): McpServer {
 		},
 		async (params: any) => {
 			try {
-				const response = await apiRequest<{ data: Env[]; count: number }>(
+				const response = await apiRequest<{ data: Env[]; count?: number; total?: number }>(
 					"/envs",
 					"GET",
 					undefined,
 					{ searchValue: params.searchValue, t: Date.now() }
 				);
 
-				const envs = response.data || [];
-				const total = response.count || 0;
+				const { items: envs, total } = extractList<Env>(response);
 
 				if (envs.length === 0) {
 					return { content: [{ type: "text" as const, text: "暂无环境变量" }] };
@@ -595,15 +609,14 @@ function createServer(): McpServer {
 		},
 		async (params: any) => {
 			try {
-				const response = await apiRequest<{ data: Subscription[]; count: number }>(
+				const response = await apiRequest<{ data: Subscription[]; count?: number; total?: number }>(
 					"/subscriptions",
 					"GET",
 					undefined,
 					{ searchValue: params.searchValue, t: Date.now() }
 				);
 
-				const subs = response.data || [];
-				const total = response.count || 0;
+				const { items: subs, total } = extractList<Subscription>(response);
 
 				if (subs.length === 0) {
 					return { content: [{ type: "text" as const, text: "暂无订阅" }] };
@@ -821,6 +834,7 @@ function createServer(): McpServer {
 			description: "列出青龙面板中的所有依赖",
 			inputSchema: z.object({
 				searchValue: z.string().optional().describe("搜索关键词"),
+				type: z.nativeEnum(DependenceType).optional().describe("依赖类型：1=NodeJS, 2=Python3, 3=Linux（不传则全部）"),
 				limit: z.number().int().min(1).max(100).default(PAGINATION.defaultLimit).describe("返回数量"),
 				offset: z.number().int().min(0).default(0).describe("偏移量"),
 				response_format: z.nativeEnum(ResponseFormat).default(ResponseFormat.MARKDOWN)
@@ -834,15 +848,36 @@ function createServer(): McpServer {
 		},
 		async (params: any) => {
 			try {
-				const response = await apiRequest<{ data: Dependence[]; count: number }>(
-					"/dependencies",
-					"GET",
-					undefined,
-					{ searchValue: params.searchValue, t: Date.now() }
+				const typeList = params.type
+					? [params.type]
+					: [DependenceType.NODE_JS, DependenceType.PYTHON3, DependenceType.LINUX];
+
+				const responses = await Promise.all(
+					typeList.map((type) =>
+						apiRequest<{ data: Dependence[]; count?: number; total?: number }>(
+							"/dependencies",
+							"GET",
+							undefined,
+							{ searchValue: params.searchValue, type, t: Date.now() }
+						)
+					)
 				);
 
-				const deps = response.data || [];
-				const total = response.count || 0;
+				const deps: Dependence[] = [];
+				const seen = new Set<string>();
+				let total = 0;
+
+				for (const response of responses) {
+					const { items, total: listTotal } = extractList<Dependence>(response);
+					total += listTotal;
+					for (const item of items) {
+						const key = item.id ? String(item.id) : `${item.type}:${item.name}`;
+						if (!seen.has(key)) {
+							seen.add(key);
+							deps.push(item);
+						}
+					}
+				}
 
 				if (deps.length === 0) {
 					return { content: [{ type: "text" as const, text: "暂无依赖" }] };
@@ -984,7 +1019,7 @@ function createServer(): McpServer {
 					{ path: params.path }
 				);
 
-				const scripts = response.data || [];
+				const { items: scripts } = extractList<Script>(response);
 
 				if (scripts.length === 0) {
 					return { content: [{ type: "text" as const, text: "暂无脚本文件" }] };
@@ -1240,8 +1275,7 @@ function createServer(): McpServer {
 		},
 		async (_params: any) => {
 			try {
-				const response = await apiRequest<{ data: SystemInfo }>("/system", "GET");
-				const info = response.data;
+				const info = await apiRequest<SystemInfo>("/system", "GET");
 				const text = `# 系统信息
 
 - **版本**: ${info.version}
