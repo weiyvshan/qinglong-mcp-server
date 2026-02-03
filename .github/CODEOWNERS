@@ -1,0 +1,15 @@
+# 全局维护者
+* @maintainer
+
+# 源代码
+/src/ @maintainer
+
+# 文档
+*.md @maintainer
+/docs/ @maintainer
+
+# GitHub 配置
+/.github/ @maintainer
+
+# CI/CD 工作流
+/.github/workflows/ @maintainer

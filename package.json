@@ -32,11 +32,11 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/your-username/qinglong-mcp-server"
+    "url": "https://github.com/weiyvshan/qinglong-mcp-server"
   },
-  "homepage": "https://github.com/your-username/qinglong-mcp-server#readme",
+  "homepage": "https://github.com/weiyvshan/qinglong-mcp-server#readme",
   "bugs": {
-    "url": "https://github.com/your-username/qinglong-mcp-server/issues"
+    "url": "https://github.com/weiyvshan/qinglong-mcp-server/issues"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.6.1",

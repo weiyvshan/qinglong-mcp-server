@@ -1,0 +1,21 @@
+cff-version: 1.2.0
+title: "Qinglong MCP Server"
+message: "如果你使用了这个软件，请按如下方式引用。"
+type: software
+authors:
+  - family-names: ""
+    given-names: ""
+    # email: your-email@example.com
+repository-code: "https://github.com/weiyvshan/qinglong-mcp-server"
+url: "https://github.com/weiyvshan/qinglong-mcp-server"
+license: MIT
+version: 1.0.3
+date-released: 2025-02-02
+keywords:
+  - mcp
+  - qinglong
+  - cron
+  - automation
+  - task-scheduler
+  - claude
+  - model-context-protocol

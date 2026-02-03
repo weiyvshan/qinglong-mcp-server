@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: 查看文档
+    url: https://github.com/weiyvshan/qinglong-mcp-server#readme
+    about: 在提交问题前，请先查看 README 文档
+  - name: 使用示例
+    url: https://github.com/weiyvshan/qinglong-mcp-server/blob/main/EXAMPLES.md
+    about: 查看详细的使用示例

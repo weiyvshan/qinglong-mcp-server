@@ -1,5 +1,8 @@
 # Qinglong MCP Server
 
+[![CI](https://github.com/weiyvshan/qinglong-mcp-server/workflows/CI/badge.svg)](https://github.com/weiyvshan/qinglong-mcp-server/actions)
+[![Version](https://img.shields.io/npm/v/qinglong-mcp-server.svg)](https://www.npmjs.com/package/qinglong-mcp-server)
+[![License](https://img.shields.io/github/license/weiyvshan/qinglong-mcp-server.svg)](LICENSE)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.7.2-blue.svg)](https://www.typescriptlang.org/)
 [![MCP SDK](https://img.shields.io/badge/MCP%20SDK-1.6.1-green.svg)](https://modelcontextprotocol.io/)
 [![Node.js](https://img.shields.io/badge/Node.js-%3E%3D18-brightgreen.svg)](https://nodejs.org/)
@@ -171,6 +174,18 @@ qinglong-mcp-server/
 - [青龙面板](https://github.com/whyour/qinglong)
 - [MCP 协议](https://modelcontextprotocol.io/)
 
+## 贡献
+
+欢迎提交 Issue 和 Pull Request！请查看 [CONTRIBUTING.md](CONTRIBUTING.md) 了解如何参与贡献。
+
+## 安全
+
+发现安全问题？请查看 [SECURITY.md](SECURITY.md) 了解如何报告。
+
+## 更新日志
+
+查看 [CHANGELOG.md](CHANGELOG.md) 了解版本更新历史。
+
 ## 许可证
 
-MIT License
+[MIT License](LICENSE)

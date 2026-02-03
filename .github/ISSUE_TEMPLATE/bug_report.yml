@@ -1,0 +1,88 @@
+name: Bug Report
+description: 报告一个问题或异常行为
+title: "[BUG] "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        感谢报告问题！请填写以下信息帮助我们快速定位和修复。
+
+  - type: textarea
+    id: description
+    attributes:
+      label: 问题描述
+      description: 清晰描述遇到的问题
+      placeholder: 发生了什么？
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: 复现步骤
+      description: 如何复现这个问题？
+      placeholder: |
+        1. 运行命令 '...'
+        2. 配置环境变量 '...'
+        3. 看到错误
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: 预期行为
+      description: 你期望发生什么？
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: 实际行为
+      description: 实际发生了什么？
+    validations:
+      required: true
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: 错误日志
+      description: 请提供相关的错误日志或截图
+      render: shell
+
+  - type: dropdown
+    id: environment
+    attributes:
+      label: 运行环境
+      options:
+        - macOS
+        - Linux
+        - Windows (WSL)
+        - Docker
+        - 其他
+    validations:
+      required: true
+
+  - type: input
+    id: node_version
+    attributes:
+      label: Node.js 版本
+      placeholder: "例如: 20.10.0"
+
+  - type: input
+    id: qinglong_version
+    attributes:
+      label: 青龙面板版本
+      placeholder: "例如: 2.17.0"
+
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: 确认事项
+      options:
+        - label: 我已检查现有 issues，没有重复问题
+          required: true
+        - label: 我已提供足够的信息来复现问题
+          required: true
