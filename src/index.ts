@@ -384,6 +384,39 @@ function createServer(): McpServer {
 		}
 	);
 
+	server.registerTool(
+		"qinglong_get_cron_logs",
+		{
+			title: "获取任务日志列表",
+			description: "获取指定定时任务的所有日志记录",
+			inputSchema: z.object({
+				id: z.number().int().positive().describe("任务ID")
+			}).strict(),
+			annotations: {
+				readOnlyHint: true,
+				destructiveHint: false,
+				idempotentHint: true,
+				openWorldHint: true
+			}
+		},
+		async (params: any) => {
+			try {
+				const response = await apiRequest<any>(`/crons/${params.id}/logs`, "GET");
+				return {
+					content: [
+						{
+							type: "text" as const,
+							text: response ? JSON.stringify(response, null, 2) : "暂无日志记录"
+						}
+					],
+					structuredContent: response
+				};
+			} catch (error) {
+				return { content: [{ type: "text" as const, text: handleApiError(error) }] };
+			}
+		}
+	);
+
 	// ==========================================================================
 	// 环境变量管理 (Env)
 	// ==========================================================================
@@ -973,7 +1006,7 @@ function createServer(): McpServer {
 	// 脚本管理 (Script)
 	// ==========================================================================
 
-	server.registerTool(
+server.registerTool(
 		"qinglong_list_scripts",
 		{
 			title: "列出脚本",
@@ -1022,6 +1055,92 @@ function createServer(): McpServer {
 				return {
 					content: [{ type: "text" as const, text: params.response_format === ResponseFormat.MARKDOWN ? text : JSON.stringify(scripts, null, 2) }],
 					structuredContent: { scripts }
+				};
+			} catch (error) {
+				return { content: [{ type: "text" as const, text: handleApiError(error) }] };
+			}
+		}
+	);
+
+	// ==========================================================================
+	// 日志管理 (Logs)
+	// ==========================================================================
+
+	server.registerTool(
+		"qinglong_list_logs",
+		{
+			title: "列出日志文件",
+			description: "列出青龙面板可访问的日志文件列表",
+			inputSchema: z.object({
+				response_format: z.nativeEnum(ResponseFormat).default(ResponseFormat.MARKDOWN)
+			}).strict(),
+			annotations: {
+				readOnlyHint: true,
+				destructiveHint: false,
+				idempotentHint: true,
+				openWorldHint: true
+			}
+		},
+		async (params: any) => {
+			try {
+				const response = await apiRequest<any>("/logs", "GET");
+				const { items: logs } = extractList<Log>(response);
+
+				if (logs.length === 0) {
+					return { content: [{ type: "text" as const, text: "暂无日志文件" }] };
+				}
+
+				const formatFn = (log: Log & Record<string, unknown>) => {
+					const title = typeof log.title === "string" ? log.title : "日志";
+					return `- ${title}\n`;
+				};
+
+				const { text, output } = formatListResponse(
+					logs,
+					logs.length,
+					{ offset: 0, limit: logs.length },
+					formatFn,
+					"日志文件列表"
+				);
+
+				return {
+					content: [{ type: "text" as const, text: params.response_format === ResponseFormat.MARKDOWN ? text : JSON.stringify(output, null, 2) }],
+					structuredContent: output
+				};
+			} catch (error) {
+				return { content: [{ type: "text" as const, text: handleApiError(error) }] };
+			}
+		}
+	);
+
+	server.registerTool(
+		"qinglong_get_log_detail",
+		{
+			title: "获取日志详情",
+			description: "获取指定日志文件的内容",
+			inputSchema: z.object({
+				path: z.string().optional().describe("日志路径"),
+				file: z.string().optional().describe("日志文件名"),
+				response_format: z.nativeEnum(ResponseFormat).default(ResponseFormat.MARKDOWN)
+			}).strict(),
+			annotations: {
+				readOnlyHint: true,
+				destructiveHint: false,
+				idempotentHint: true,
+				openWorldHint: true
+			}
+		},
+		async (params: any) => {
+			try {
+				const response = await apiRequest<string>("/logs/detail", "GET", undefined, {
+					path: params.path,
+					file: params.file
+				});
+
+				const text = response || "暂无日志内容";
+				return {
+					content: [{ type: "text" as const, text }],
+					structuredContent: { log: text }
 				};
 			} catch (error) {
 				return { content: [{ type: "text" as const, text: handleApiError(error) }] };
