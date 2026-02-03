@@ -9,7 +9,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
-      id-token: write  # 启用 OIDC token 用于 provenance
+      id-token: write  # 启用 OIDC 用于受托发布和 provenance
     steps:
       - name: Checkout
         uses: actions/checkout@v6
@@ -27,7 +27,5 @@ jobs:
       - name: Build
         run: npm run build
 
-      - name: Publish to NPM with Provenance
+      - name: Publish to NPM with Trusted Publishing
         run: npm publish --provenance --access public
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
