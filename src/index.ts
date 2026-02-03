@@ -834,7 +834,6 @@ function createServer(): McpServer {
 			description: "列出青龙面板中的所有依赖",
 			inputSchema: z.object({
 				searchValue: z.string().optional().describe("搜索关键词"),
-				type: z.nativeEnum(DependenceType).optional().describe("依赖类型：1=NodeJS, 2=Python3, 3=Linux（不传则全部）"),
 				limit: z.number().int().min(1).max(100).default(PAGINATION.defaultLimit).describe("返回数量"),
 				offset: z.number().int().min(0).default(0).describe("偏移量"),
 				response_format: z.nativeEnum(ResponseFormat).default(ResponseFormat.MARKDOWN)
@@ -848,38 +847,16 @@ function createServer(): McpServer {
 		},
 		async (params: any) => {
 			try {
-				const typeList = params.type
-					? [params.type]
-					: [DependenceType.NODE_JS, DependenceType.PYTHON3, DependenceType.LINUX];
-
 				const deps: Dependence[] = [];
-				const seen = new Set<string>();
-				let total = 0;
+				const response = await apiRequest<{ data: Dependence[]; count?: number; total?: number }>(
+					"/dependencies",
+					"GET",
+					undefined,
+					{ searchValue: params.searchValue, t: Date.now() }
+				);
 
-				for (const type of typeList) {
-					try {
-						const response = await apiRequest<{ data: Dependence[]; count?: number; total?: number }>(
-							"/dependencies",
-							"GET",
-							undefined,
-							{ searchValue: params.searchValue, type: String(type), t: Date.now() }
-						);
-
-						const { items, total: listTotal } = extractList<Dependence>(response);
-						total += listTotal;
-						for (const item of items) {
-							const key = item.id ? String(item.id) : `${item.type}:${item.name}`;
-							if (!seen.has(key)) {
-								seen.add(key);
-								deps.push(item);
-							}
-						}
-					} catch (error) {
-						if (params.type) {
-							throw error;
-						}
-					}
-				}
+				const { items, total } = extractList<Dependence>(response);
+				deps.push(...items);
 
 				if (deps.length === 0) {
 					return { content: [{ type: "text" as const, text: "暂无依赖" }] };
