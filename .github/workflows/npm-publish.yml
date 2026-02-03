@@ -1,25 +1,27 @@
 name: Publish to NPM
 
 on:
-  release:
-    types: [published]
+  push:
+    tags:
+      - 'v*'  # 匹配 v1.0.0、v2.1.3 这类版本标签
+
+# 核心权限：受托发布需要 OIDC 令牌权限
+permissions:
+  id-token: write   # 用于和 npm 进行安全认证
+  contents: read    # 读取仓库代码
 
 jobs:
   publish:
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      id-token: write  # 启用 OIDC 用于受托发布和 provenance
     steps:
-      - name: Checkout
-        uses: actions/checkout@v6
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v6
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
         with:
-          node-version: '20'
-          cache: 'npm'
-          registry-url: 'https://registry.npmjs.org'
+          node-version: 20
+          registry-url: https://registry.npmjs.org/
 
       - name: Install dependencies
         run: npm ci
@@ -27,5 +29,5 @@ jobs:
       - name: Build
         run: npm run build
 
-      - name: Publish to NPM with Trusted Publishing
+      - name: Publish to npm with Trusted Publishing
         run: npm publish --provenance --access public
