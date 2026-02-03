@@ -1047,18 +1047,23 @@ function createServer(): McpServer {
 		},
 		async (params: any) => {
 			try {
-				const response = await apiRequest<ScriptDetail>(
+				const response = await apiRequest<ScriptDetail | string>(
 					"/scripts/detail",
 					"GET",
 					undefined,
 					{ file: params.file, path: params.path }
 				);
 
-				const text = `# ${response.filename}\n\n\`\`\`\n${response.content}\n\`\`\``;
+				const detail =
+					typeof response === "string"
+						? { filename: params.file, path: params.path, content: response }
+						: response;
+
+				const text = `# ${detail.filename}\n\n\`\`\`\n${detail.content}\n\`\`\``;
 
 				return {
 					content: [{ type: "text" as const, text }],
-					structuredContent: { script: response }
+					structuredContent: { script: detail }
 				};
 			} catch (error) {
 				return { content: [{ type: "text" as const, text: handleApiError(error) }] };
