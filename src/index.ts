@@ -1285,7 +1285,10 @@ function createServer(): McpServer {
 			inputSchema: z.object({
 				title: z.string().min(1).describe("通知标题"),
 				content: z.string().min(1).describe("通知内容"),
-				notification_type: z.nativeEnum(NotificationMode).optional().describe("通知方式类型")
+				notification_type: z.nativeEnum(NotificationMode).optional().describe("通知方式类型（兼容旧参数）"),
+				notificationInfo: z.object({
+					type: z.nativeEnum(NotificationMode).describe("通知方式类型")
+				}).passthrough().optional().describe("通知配置对象（可包含渠道参数）")
 			}).strict(),
 			annotations: {
 				readOnlyHint: false,
@@ -1300,7 +1303,9 @@ function createServer(): McpServer {
 					title: params.title,
 					content: params.content
 				};
-				if (params.notification_type) {
+				if (params.notificationInfo) {
+					body.notificationInfo = params.notificationInfo;
+				} else if (params.notification_type) {
 					body.notificationInfo = { type: params.notification_type };
 				}
 				await apiRequest("/system/notify", "PUT", body);
