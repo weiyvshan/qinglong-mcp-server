@@ -15,6 +15,7 @@ import {
 	Env,
 	Subscription,
 	Script,
+	ScriptDetail,
 	Dependence,
 	DependenceType,
 	Log,
@@ -1006,7 +1007,7 @@ function createServer(): McpServer {
 
 				return {
 					content: [{ type: "text" as const, text: params.response_format === ResponseFormat.MARKDOWN ? text : JSON.stringify(scripts, null, 2) }],
-					structuredContent: scripts
+					structuredContent: { scripts }
 				};
 			} catch (error) {
 				return { content: [{ type: "text" as const, text: handleApiError(error) }] };

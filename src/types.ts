@@ -120,6 +120,7 @@ export interface Script {
 }
 
 export interface ScriptDetail {
+	[key: string]: unknown;
 	filename: string;
 	path?: string;
 	content: string;
