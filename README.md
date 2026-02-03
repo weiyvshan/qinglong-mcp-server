@@ -20,16 +20,21 @@
 
 ## 快速开始
 
-### 1. 安装
+### 方式 A：直接使用 npm（推荐）
 
 ```bash
-git clone https://github.com/your-repo/qinglong-mcp-server.git
-cd qinglong-mcp-server
-npm install
-npm run build
+npm install -g qinglong-mcp-server
 ```
 
-### 2. 配置环境变量
+### 方式 B：使用 npx（无需全局安装）
+
+```bash
+npx qinglong-mcp-server
+```
+
+### 配置环境变量（两种方式都需要）
+
+在青龙面板中创建 Client Credentials，得到 `client_id` 和 `client_secret`，并配置以下环境变量：
 
 ```bash
 export QL_URL="http://localhost:5700"
@@ -37,15 +42,26 @@ export QL_CLIENT_ID="your_client_id"
 export QL_CLIENT_SECRET="your_client_secret"
 ```
 
-### 3. 运行
+### 与 Claude Code 集成
 
-```bash
-npm start
+编辑 `~/.claude/mcp.json`（全局安装时）：
+
+```json
+{
+  "mcpServers": {
+    "qinglong": {
+      "command": "qinglong-mcp",
+      "env": {
+        "QL_URL": "http://your-qinglong:5700",
+        "QL_CLIENT_ID": "your_client_id",
+        "QL_CLIENT_SECRET": "your_client_secret"
+      }
+    }
+  }
+}
 ```
 
-### 4. 与 Claude Code 集成
-
-编辑 `~/.claude/mcp.json`:
+如果你用的是源码方式（开发者/贡献者），请改用：
 
 ```json
 {
@@ -61,6 +77,16 @@ npm start
     }
   }
 }
+```
+
+### 源码运行（开发者）
+
+```bash
+git clone https://github.com/weiyvshan/qinglong-mcp-server.git
+cd qinglong-mcp-server
+npm install
+npm run build
+npm start
 ```
 
 ## 功能模块
