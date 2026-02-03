@@ -852,29 +852,31 @@ function createServer(): McpServer {
 					? [params.type]
 					: [DependenceType.NODE_JS, DependenceType.PYTHON3, DependenceType.LINUX];
 
-				const responses = await Promise.all(
-					typeList.map((type) =>
-						apiRequest<{ data: Dependence[]; count?: number; total?: number }>(
-							"/dependencies",
-							"GET",
-							undefined,
-							{ searchValue: params.searchValue, type, t: Date.now() }
-						)
-					)
-				);
-
 				const deps: Dependence[] = [];
 				const seen = new Set<string>();
 				let total = 0;
 
-				for (const response of responses) {
-					const { items, total: listTotal } = extractList<Dependence>(response);
-					total += listTotal;
-					for (const item of items) {
-						const key = item.id ? String(item.id) : `${item.type}:${item.name}`;
-						if (!seen.has(key)) {
-							seen.add(key);
-							deps.push(item);
+				for (const type of typeList) {
+					try {
+						const response = await apiRequest<{ data: Dependence[]; count?: number; total?: number }>(
+							"/dependencies",
+							"GET",
+							undefined,
+							{ searchValue: params.searchValue, type: String(type), t: Date.now() }
+						);
+
+						const { items, total: listTotal } = extractList<Dependence>(response);
+						total += listTotal;
+						for (const item of items) {
+							const key = item.id ? String(item.id) : `${item.type}:${item.name}`;
+							if (!seen.has(key)) {
+								seen.add(key);
+								deps.push(item);
+							}
+						}
+					} catch (error) {
+						if (params.type) {
+							throw error;
 						}
 					}
 				}
@@ -1079,7 +1081,7 @@ function createServer(): McpServer {
 
 				return {
 					content: [{ type: "text" as const, text }],
-					structuredContent: response
+					structuredContent: { script: response }
 				};
 			} catch (error) {
 				return { content: [{ type: "text" as const, text: handleApiError(error) }] };

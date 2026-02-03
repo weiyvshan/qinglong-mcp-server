@@ -147,11 +147,17 @@ export async function apiRequest<T>(
   params?: any
 ): Promise<T> {
   const client = await getApiClient();
+  const cleanedParams =
+    params && typeof params === "object"
+      ? Object.fromEntries(
+          Object.entries(params).filter(([, value]) => value !== undefined)
+        )
+      : params;
   const response = await client.request<T>({
     method,
     url: endpoint,
     data,
-    params
+    params: cleanedParams
   });
   const payload: any = response.data;
   if (payload && typeof payload === "object" && "code" in payload) {
