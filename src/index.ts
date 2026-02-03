@@ -852,7 +852,7 @@ function createServer(): McpServer {
 					"/dependencies",
 					"GET",
 					undefined,
-					{ searchValue: params.searchValue, t: Date.now() }
+					params.searchValue ? { searchValue: params.searchValue } : undefined
 				);
 
 				const { items, total } = extractList<Dependence>(response);
