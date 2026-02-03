@@ -402,14 +402,10 @@ function createServer(): McpServer {
 		async (params: any) => {
 			try {
 				const response = await apiRequest<any>(`/crons/${params.id}/logs`, "GET");
+				const text = response ? JSON.stringify(response, null, 2) : "暂无日志记录";
 				return {
-					content: [
-						{
-							type: "text" as const,
-							text: response ? JSON.stringify(response, null, 2) : "暂无日志记录"
-						}
-					],
-					structuredContent: response
+					content: [{ type: "text" as const, text }],
+					structuredContent: { logs: response }
 				};
 			} catch (error) {
 				return { content: [{ type: "text" as const, text: handleApiError(error) }] };
