@@ -1,42 +1,41 @@
 {
   "name": "qinglong-mcp-server",
-  "version": "1.0.13",
-  "description": "MCP server for Qinglong Panel - Manage crons, scripts, environment variables, and system configuration via Claude",
-  "type": "module",
+  "version": "1.0.14",
+  "description": "青龙面板 MCP 服务器 - 基于 Model Context Protocol 的青龙面板管理工具",
   "main": "dist/index.js",
+  "type": "module",
   "bin": {
-    "qinglong-mcp": "dist/index.js"
+    "qinglong-mcp-server": "dist/index.js"
   },
   "files": [
-    "dist"
+    "dist",
+    "README.md",
+    "LICENSE"
   ],
   "scripts": {
-    "start": "node dist/index.js",
-    "dev": "tsx watch src/index.ts",
     "build": "tsc",
-    "clean": "rm -rf dist"
-  },
-  "engines": {
-    "node": ">=18"
+    "dev": "tsx watch src/index.ts",
+    "start": "node dist/index.js",
+    "clean": "rm -rf dist",
+    "test": "vitest",
+    "test:coverage": "vitest --coverage",
+    "test:ui": "vitest --ui",
+    "lint": "tsc --noEmit",
+    "typecheck": "tsc --noEmit"
   },
   "keywords": [
     "mcp",
     "qinglong",
-    "cron",
+    "青龙面板",
+    "model-context-protocol",
     "automation",
-    "task-scheduler",
-    "claude",
-    "model-context-protocol"
+    "cron",
+    "scheduler"
   ],
   "author": "",
   "license": "MIT",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/weiyvshan/qinglong-mcp-server.git"
-  },
-  "homepage": "https://github.com/weiyvshan/qinglong-mcp-server#readme",
-  "bugs": {
-    "url": "https://github.com/weiyvshan/qinglong-mcp-server/issues"
+  "engines": {
+    "node": ">=18.0.0"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.6.1",
@@ -44,9 +43,17 @@
     "zod": "^4.3.6"
   },
   "devDependencies": {
-    "@types/express": "^5.0.6",
     "@types/node": "^25.2.0",
     "tsx": "^4.19.2",
-    "typescript": "^5.7.2"
+    "typescript": "^5.7.2",
+    "vitest": "^3.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/weiyvshan/qinglong-mcp-server.git"
+  },
+  "homepage": "https://github.com/weiyvshan/qinglong-mcp-server#readme",
+  "bugs": {
+    "url": "https://github.com/weiyvshan/qinglong-mcp-server/issues"
   }
 }
