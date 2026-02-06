@@ -7,8 +7,28 @@
 
 ## [Unreleased]
 
+## [1.0.14] - 2026-02-06
+
 ### Added
-- 初始化项目结构和基础功能
+- 添加 Vitest 测试框架支持
+- 新增测试脚本: `npm test`, `npm run test:coverage`, `npm run test:ui`
+- 新增代码检查脚本: `npm run lint`, `npm run typecheck`
+
+### Changed
+- **架构重构**: 将 `index.ts` 从 1450 行拆分为 7 个模块
+  - `tools/cron.ts` - 定时任务管理 (10个工具)
+  - `tools/env.ts` - 环境变量管理 (6个工具)
+  - `tools/subscription.ts` - 订阅管理 (7个工具)
+  - `tools/dependence.ts` - 依赖管理 (4个工具)
+  - `tools/script.ts` - 脚本管理 (9个工具)
+  - `tools/system.ts` - 系统管理 (2个工具)
+  - `utils/formatters.ts` - 通用格式化工具
+- 统一版本号管理 (package.json 和 constants.ts 同步)
+- 优化代码结构和可维护性
+
+### Fixed
+- 修复版本号不一致问题 (1.0.13 vs 1.0.0)
+- 优化类型导入和代码组织
 
 ## [1.0.3] - 2025-02-02
 
